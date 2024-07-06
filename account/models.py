@@ -39,9 +39,9 @@ class CustomUser(AbstractUser):
     date_joined = models.DateTimeField(auto_now_add=True)
     is_superadmin = models.BooleanField(default=False)
     is_admin = models.BooleanField(default=False)
-    is_ops = models.BooleanField(default=True)
-    is_commerciaux = models.BooleanField(default=True)
-    is_superuser = models.BooleanField(default=False)
+    is_ops = models.BooleanField(default=False)
+    is_commerciaux = models.BooleanField(default=False)
+  
     
     objects = UserManager()
     
