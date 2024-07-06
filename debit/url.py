@@ -1,5 +1,6 @@
 from django.urls import path
+from .views import creerDebit
 
 urlpatterns = [
-    path()
+    path('create-debit/', creerDebit, name="creer-debit")
 ]
