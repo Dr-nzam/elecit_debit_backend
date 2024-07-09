@@ -12,7 +12,6 @@ from account.models import CustomUser
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def creerDebit(request):
-
     user = request.user
     if user.is_superuser: 
         emailAdmin = request.data['email']
@@ -30,9 +29,35 @@ def creerDebit(request):
             serializerdebit = SerializerDepotIn(data=new_debit_data)
             serializerdebit.is_valid(raise_exception=True)
             serializerdebit.save()
-
             return Response({"msg": "Nouveau compte et débit créés avec succès"}, status=status.HTTP_201_CREATED)
-        else:
+        else: 
             return Response({"msg": "Ce compte existe déjà"}, status=status.HTTP_400_BAD_REQUEST)
     else:
         return Response({"msg": "Vous n'êtes pas autorisé à créer un débit de boisson"}, status=status.HTTP_403_FORBIDDEN)
+    
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def creerAutreCompte(request):
+    user = request.user
+    if user.is_admin:
+        email = request.data['email']
+        password = request.data['password']
+        is_ops = request.data['is_ops']
+        is_commerciaux = request.data['is_commerciaux']
+        if (is_ops and is_commerciaux or (not is_ops and not is_commerciaux)):
+            return Response({'msg':'veillez choisir service ops ou commerciaux'}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+                if not CustomUser.objects.filter(email=email).exists():
+                    print("ttot")
+                    new_user_data = {'email': email, 'password': password, 
+                                    'is_commerciaux':is_commerciaux, 'is_ops':is_ops  }  
+                    serializeruser = UserSerializer(data=new_user_data)
+                    serializeruser.is_valid(raise_exception=True)
+                    serializeruser.save()
+                    return Response({'msg':'Compte creer avec sucess'}, status=status.HTTP_400_BAD_REQUEST)
+                else:
+                    return Response({'msg':'ce compte existe deja'}, status=status.HTTP_400_BAD_REQUEST)
+    else:
+        return Response({'msg':'Vous n\'avez pas les droits pour creer ce compte'}, status=status.HTTP_400_BAD_REQUEST)
+            
